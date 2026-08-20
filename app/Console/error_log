@@ -1,0 +1,48 @@
+[08-May-2026 08:52:48 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[08-May-2026 09:09:09 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[15-May-2026 13:17:04 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[25-May-2026 23:28:00 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[26-May-2026 00:59:05 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[26-May-2026 00:59:06 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[26-May-2026 00:59:47 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[16-Jun-2026 19:59:31 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[16-Jun-2026 23:06:25 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[16-Jun-2026 23:06:27 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[16-Jun-2026 23:11:15 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8
+[16-Jun-2026 23:11:15 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Console\Kernel" not found in /home/cf88news/public_html/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Console/Kernel.php on line 8

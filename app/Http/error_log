@@ -1,0 +1,20 @@
+[16-Jun-2026 19:59:31 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Http\Kernel" not found in /home/cf88news/public_html/app/Http/Kernel.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Http/Kernel.php on line 7
+[16-Jun-2026 23:06:26 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Http\Kernel" not found in /home/cf88news/public_html/app/Http/Kernel.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Http/Kernel.php on line 7
+[16-Jun-2026 23:06:28 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Http\Kernel" not found in /home/cf88news/public_html/app/Http/Kernel.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Http/Kernel.php on line 7
+[16-Jun-2026 23:11:15 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Http\Kernel" not found in /home/cf88news/public_html/app/Http/Kernel.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Http/Kernel.php on line 7
+[16-Jun-2026 23:11:15 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Http\Kernel" not found in /home/cf88news/public_html/app/Http/Kernel.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/app/Http/Kernel.php on line 7

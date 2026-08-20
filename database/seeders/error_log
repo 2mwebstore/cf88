@@ -1,0 +1,16 @@
+[25-May-2026 23:27:34 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Seeder" not found in /home/cf88news/public_html/database/seeders/UserSeeder.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/database/seeders/UserSeeder.php on line 8
+[26-May-2026 00:58:39 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Seeder" not found in /home/cf88news/public_html/database/seeders/UserSeeder.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/database/seeders/UserSeeder.php on line 8
+[26-May-2026 00:58:40 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Seeder" not found in /home/cf88news/public_html/database/seeders/UserSeeder.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/database/seeders/UserSeeder.php on line 8
+[26-May-2026 00:59:21 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Seeder" not found in /home/cf88news/public_html/database/seeders/UserSeeder.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/database/seeders/UserSeeder.php on line 8

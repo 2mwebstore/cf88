@@ -1,0 +1,226 @@
+
+<div id="filemanager" class="space-y-2 text-white bg-gray-800">
+    <div id="filemanager_loading" class="w-full h-full flex items-center justify-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+    </div>
+    <div id="filemanager_alert" class="border border-blue-500 p-4 rounded-md mb-2 max-w-xl mx-auto hidden">
+        <div class="flex items-center justify-center">
+            <span id="filemanager_alert_icon">
+                <i class="fas fa-info-circle text-blue-500 text-2xl mr-3"></i>
+            </span>
+            <div id="filemanager_alert_message" class="text-center">Alert message</div>
+        </div>
+        <form id="filemanager_alert_passwordform" class="flex flex-col items-center mt-3 hidden">
+            <input type="password" id="filemanager_alert_passwordform_input" class="border border-gray-600 p-2 rounded-md mb-2 w-full bg-gray-700 text-white" placeholder="Enter Password">
+            <button type="submit" id="filemanager_alert_passwordform_submit" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md flex items-center">
+                <i class="fas fa-lock-open mr-2"></i>Unlock
+            </button>
+            <div id="filemanager_alert_passwordform_loading" class="w-full h-full flex items-center justify-center hidden">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-4 border-blue-500"></div>
+            </div>
+        </form>
+    </div>
+    <div id="filemanager_description" class="border border-gray-500 p-4 rounded-md mb-2 hidden">
+        <div class="flex items-center justify-center">
+            <div id="filemanager_description_value" class="prose prose-invert text-sm max-w-full">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-4 border-blue-500"></div>
+            </div>
+        </div>
+    </div>
+    <div id="filemanager_maincontent" class="flex items-center justify-between hidden" data-item-id="">
+        <div class="flex items-center space-x-2">
+                <button id="filemanager_maincontent_back" class="border border-gray-600 text-white text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            <div class="relative inline-flex">
+                <span id="filemanager_maincontent_icon"><i class="fas fa-folder-open text-yellow-400 text-2xl mr-2"></i></span>
+                <div class="absolute inline-flex items-center justify-center w-auto min-w-5 h-5 text-xs font-bold text-white bg-gray-500 border border-gray-900 rounded-full -bottom-1 -start-1">
+                    <span id="filemanager_maincontent_itemscount">0</span>
+                </div>
+            </div>
+            <div class="">
+                <div class="flex items-center space-x-2 max-w-64 sm:max-w-96 md:max-w-96 xl:max-w-3xl 2xl:max-w-4xl">
+                    <h1 id="filemanager_maincontent_name" class="font-bold truncate">Main folder</h1>
+                </div>
+                <div class="flex flex-row text-xs text-gray-400">
+                    <div id="filemanager_maincontent_createtime" class="hidden"><span id="filemanager_maincontent_createtimevalue">00/00/0000</span></div>
+                </div>
+                <div id="filemanager_maincontent_properties" class="text-xs flex flex-row mt-1">
+                    <span id="filemanager_maincontent_properties_public" class="bg-gray-500 text-white rounded px-1 py-0.5 mr-1 hidden"><i class="fas fa-globe mr-1"></i>public</span>
+                    <span id="filemanager_maincontent_properties_password" class="bg-gray-500 text-white rounded px-1 py-0.5 mr-1 hidden"><i class="fas fa-lock mr-1"></i>protected</span>
+                    <span id="filemanager_maincontent_properties_tags" class="bg-gray-500 text-white rounded px-1 py-0.5 mr-1 hidden"><i class="fas fa-tag mr-1"></i>tags</span>
+                    <span id="filemanager_maincontent_properties_expire" class="bg-gray-500 text-white rounded px-1 py-0.5 mr-1 hidden"><i class="fas fa-hourglass-end mr-1"></i>expire</span>
+                    <span id="filemanager_maincontent_properties_directlink" class="bg-gray-500 text-white rounded px-1 py-0.5 mr-1 hidden"><i class="fas fa-link mr-1"></i><span id="filemanager_maincontent_properties_directlink_value"></span></span>
+                </div>
+                <div id="filemanager_maincontent_dropdown" class="relative self-start hidden">
+                    <button class="dropdown-toggle border border-gray-600 text-xs px-2 py-0 rounded hover:bg-gray-700">
+                        <i class="fas fa-ellipsis"></i>
+                    </button>
+                    <div class="dropdown absolute bg-gray-700 mt-1 rounded shadow z-10 border w-52 border-gray-600 hidden">
+                        <a href="javascript:void(0)" class="item_download p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-download"></i>Download</a>
+                        <a href="javascript:void(0)" class="item_import p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-file-import"></i>Import</a>
+                        <a href="javascript:void(0)" class="item_share p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-share-alt"></i>Share</a>
+                        <a href="javascript:void(0)" class="item_playallmedia p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-play"></i>Play all media</a>
+                        <a href="javascript:void(0)" class="item_closeallmedia p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-stop"></i>Close all media</a>
+                        <hr class="border-gray-600">
+                        <a href="javascript:void(0)" class="item_rename p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-pencil-alt"></i>Rename</a>
+                        <a href="javascript:void(0)" class="item_copy p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-copy"></i>Copy</a>
+                        <a href="javascript:void(0)" class="item_move p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-arrows-alt"></i>Move</a>
+                        <a href="javascript:void(0)" class="item_delete p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-trash"></i>Delete</a>
+                        <hr class="border-gray-600">
+                        <a href="javascript:void(0)" class="item_properties p-2 flex items-center gap-2 hover:bg-gray-600 hidden"><i class="fas fa-info-circle"></i>Properties</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="filemanager_mainbuttons" class="flex items-center justify-between hidden">
+        <div class="flex items-center space-x-2">
+            <div id="filemanager_mainbuttons_checkboxAll" class="relative inline-flex p-1 rounded border border-gray-600 hidden">
+                <input id="filemanager_mainbuttons_checkboxAll_input" type="checkbox" class="form-checkbox text-blue-500">
+                <div id="filemanager_mainbuttons_checkboxAll_count" class="absolute inline-flex items-center justify-center w-auto min-w-5 h-5 text-xs font-bold text-white bg-gray-500 border border-gray-900 rounded-full -top-3 -end-3 hidden">
+                    <span id="filemanager_mainbuttons_checkboxAll_countvalue">0</span>
+                </div>
+            </div>
+            <button id="filemanager_mainbuttons_download" class="border border-gray-600 text-white text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-download"></i>
+            </button>
+            <button id="filemanager_mainbuttons_copy" class="border border-gray-600 text-white text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-copy"></i>
+            </button>
+            <button id="filemanager_mainbuttons_copyhere" class="relative border border-gray-600 text-yellow-500 text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-copy"></i>
+                <div class="absolute inline-flex items-center justify-center w-auto min-w-5 h-5 text-xs font-bold text-white bg-gray-500 border border-gray-900 rounded-full -top-3 -end-3">
+                    <span id="filemanager_mainbuttons_copyhere_countvalue">0</span>
+                </div>
+            </button>
+            <button id="filemanager_mainbuttons_copycancel" class="border border-gray-600 text-yellow-500 text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-times"></i>
+            </button>
+            <button id="filemanager_mainbuttons_move" class="border border-gray-600 text-white text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-arrows-alt"></i>
+            </button>
+            <button id="filemanager_mainbuttons_movehere" class="relative border border-gray-600 text-yellow-500 text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-arrows-alt"></i>
+                <div class="absolute inline-flex items-center justify-center w-auto min-w-5 h-5 text-xs font-bold text-white bg-gray-500 border border-gray-900 rounded-full -top-3 -end-3">
+                    <span id="filemanager_mainbuttons_movehere_countvalue">0</span>
+                </div>
+            </button>
+            <button id="filemanager_mainbuttons_movecancel" class="border border-gray-600 text-yellow-500 text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-times"></i>
+            </button>
+            <button id="filemanager_mainbuttons_delete" class="border border-gray-600 text-white text-sm px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center hidden">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>        
+        <div class="flex items-center space-x-2 relative">
+            <button id="filemanager_mainbuttons_share" class="bg-green-600 text-white px-2 py-1 rounded shadow hover:bg-green-700 flex items-center text-sm hidden">
+                <i class="fas fa-share-alt mr-1"></i>
+                <span class="hidden lg:inline">Share</span>
+            </button>
+            <button id="filemanager_mainbuttons_import" class="bg-green-600 text-white px-2 py-1 rounded shadow hover:bg-green-700 flex items-center text-sm hidden">
+                <i class="fas fa-file-import mr-1"></i>
+                <span class="hidden lg:inline">Import</span>
+            </button>            
+            <button id="filemanager_mainbuttons_createFolder" class="bg-blue-600 text-white px-2 py-1 rounded shadow hover:bg-blue-700 flex items-center text-sm hidden">
+                <i class="fas fa-folder-plus mr-1"></i>
+                <span class="hidden lg:inline">Create Folder</span>
+            </button>
+            <button id="filemanager_mainbuttons_uploadFiles" class="bg-blue-600 text-white px-2 py-1 rounded shadow hover:bg-blue-700 flex items-center text-sm hidden">
+                <i class="fas fa-upload mr-1"></i>
+                <span class="hidden lg:inline">Upload Files</span>
+            </button>
+            <div class="relative">
+                <button id="filemanager_mainbuttons_sort" class="dropdown-toggle bg-gray-600 text-white px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center text-sm hidden">
+                    <i class="fas fa-sort mr-1"></i>
+                    <span class="hidden lg:inline">Sort by</span>
+                    <i class="fas fa-caret-down ml-1"></i>
+                </button>
+                <div class="dropdown absolute bg-gray-700 mt-1 rounded shadow z-10 border right-0 w-52 border-gray-600 hidden">
+                    <a href="javascript:void(0)" class="filemanager_mainbuttons_sort_value p-2 flex items-center gap-2 hover:bg-gray-600" data-sort="createTime">
+                        Create time<span class="sort-icon"></span>
+                    </a>
+                    <a href="javascript:void(0)" class="filemanager_mainbuttons_sort_value p-2 flex items-center gap-2 hover:bg-gray-600" data-sort="name">
+                        Name<span class="sort-icon"></span>
+                    </a>
+                    <a href="javascript:void(0)" class="filemanager_mainbuttons_sort_value p-2 flex items-center gap-2 hover:bg-gray-600" data-sort="size">
+                        Size<span class="sort-icon"></span>
+                    </a>
+                    <!-- <a href="javascript:void(0)" class="filemanager_mainbuttons_sort_value p-2 flex items-center gap-2 hover:bg-gray-600" data-sort="downloads">
+                        Downloads<span class="sort-icon"></span>
+                    </a> -->
+                    <a href="javascript:void(0)" class="filemanager_mainbuttons_sort_value p-2 flex items-center gap-2 hover:bg-gray-600" data-sort="mimetype">
+                        Mimetype<span class="sort-icon"></span>
+                    </a>
+                </div>
+            </div>
+            <button id="filemanager_mainbuttons_filter" class="bg-gray-600 text-white px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center text-sm hidden">
+                <i class="fas fa-filter mr-1"></i>
+                <span class="hidden lg:inline">Filter</span>
+            </button>
+            <button id="filemanager_mainbuttons_search" class="bg-gray-600 text-white px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center text-sm hidden">
+                <i class="fas fa-search mr-1"></i>
+                <span class="hidden lg:inline">Search</span>
+            </button>
+            <button id="filemanager_mainbuttons_refresh" class="bg-gray-600 text-white px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center text-sm hidden">
+                <i class="fas fa-sync-alt mr-1"></i>
+                <span class="hidden lg:inline">Refresh</span>
+            </button>
+        </div>
+    </div>
+    <div id="filemanager_topbuttons_pagination" class="flex items-center justify-end pr-2 py-1 hidden">
+        <div class="flex items-center space-x-2">
+            <a href="/">
+                <button class="filemanager_mainbuttons_pagination_previous bg-gray-600 text-white px-2 py-0.5 rounded shadow hover:bg-gray-700 flex items-center text-xs hidden">
+                    <i class="fas fa-arrow-left mx-1"></i>
+                </button>
+            </a>
+            <div class="filemanager_mainbuttons_pagination_details flex items-center space-x-2 text-xs hidden">
+                <span>Page</span>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" class="filemanager_mainbuttons_pagination_pageinput w-12 bg-gray-700 border border-gray-600 rounded px-1 py-0.5 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" min="1">
+                <span>/ <span class="filemanager_mainbuttons_pagination_pagecount"><strong>1</strong></span></span>
+                <span>(<span class="filemanager_mainbuttons_pagination_itemtotal"><strong>0</strong></span> items)</span>
+            </div>
+            <button class="filemanager_mainbuttons_pagination_next bg-gray-600 text-white px-2 py-0.5 rounded shadow hover:bg-gray-700 flex items-center text-xs hidden">
+                <i class="fas fa-arrow-right mx-1"></i>
+            </button>
+        </div>
+    </div>    
+    <div id="filemanager_itemslist" class="bg-gray-800 border-t border-gray-600 p-2 hidden">
+        <div id="filemanager_itemslist_filtered" class="text-white text-center text-xs bg-gray-700 rounded mb-2 p-2 hidden">
+            <p>The results are currently filtered. Remove your filters to get all results.</p>
+        </div>
+        <div id="filemanager_itemslist_empty" class="text-white text-center bg-gray-700 rounded p-2 hidden">
+            <p>No items to display</p>
+        </div>
+    </div>
+    <div id="filemanager_mainbuttons_pagination" class="mt-2 flex justify-center items-center hidden">
+        <div class="flex flex-col items-center text-xs">
+            <div class="flex items-center space-x-2 mb-1">
+                <button class="filemanager_mainbuttons_pagination_previous bg-gray-600 text-white px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center text-xs hidden">
+                    <i class="fas fa-arrow-left mx-1"></i>
+                </button>
+                <div class="filemanager_mainbuttons_pagination_details2 flex items-center space-x-2 hidden">
+                    <span>Page</span>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="filemanager_mainbuttons_pagination_pageinput w-16 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" min="1">
+                    <span>of <span class="filemanager_mainbuttons_pagination_pagecount"><strong>1</strong></span></span>
+                </div>
+                <button class="filemanager_mainbuttons_pagination_next bg-gray-600 text-white px-2 py-1 rounded shadow hover:bg-gray-700 flex items-center text-xs hidden">
+                    <i class="fas fa-arrow-right mx-1"></i>
+                </button>
+            </div>
+            <span>Showing <span class="filemanager_mainbuttons_pagination_itemcount"><strong>0</strong></span> items per page</span>
+            <span>Total <span class="filemanager_mainbuttons_pagination_itemtotal"><strong>0</strong></span> items</span>
+        </div>
+    </div>    
+    <div id="filemanager_abuse" class="mt-4 flex flex-col items-center hidden">
+        <button id="filemanager_abuse_button" class="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded shadow flex items-center text-xs mb-2">
+            <i class="fas fa-flag mr-2"></i>
+            Report Abuse
+        </button>
+        <button id="filemanager_abuse_remove_button" class="bg-red-600 hover:bg-red-700 text-white px-2 py-0.5 rounded shadow flex items-center text-xs hidden">
+            <i class="fas fa-times mr-1"></i>
+            Remove
+        </button>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+[16-Jun-2026 20:00:03 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Testing\TestCase" not found in /home/cf88news/public_html/tests/TestCase.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/tests/TestCase.php on line 7
+[16-Jun-2026 23:07:09 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Testing\TestCase" not found in /home/cf88news/public_html/tests/TestCase.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/tests/TestCase.php on line 7
+[16-Jun-2026 23:07:09 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Testing\TestCase" not found in /home/cf88news/public_html/tests/TestCase.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/tests/TestCase.php on line 7
+[16-Jun-2026 23:11:40 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Testing\TestCase" not found in /home/cf88news/public_html/tests/TestCase.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/tests/TestCase.php on line 7
+[16-Jun-2026 23:11:40 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Testing\TestCase" not found in /home/cf88news/public_html/tests/TestCase.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/cf88news/public_html/tests/TestCase.php on line 7
