@@ -34,6 +34,16 @@ RUN composer dump-autoload --optimize \
     && cp .env.example .env 2>/dev/null || true \
     && php artisan config:clear
 
+# Laravel requires these directories to exist and be writable at runtime.
+# Git doesn't track empty directories, so if the repo's .gitignore files
+# inside them got excluded too, these won't exist after COPY — create them
+# explicitly rather than assuming they came from the repo.
+RUN mkdir -p storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache
+
 # Permissions for storage/cache (Laravel needs these writable)
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
