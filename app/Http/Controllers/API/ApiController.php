@@ -37,9 +37,21 @@ class ApiController extends Controller
 
    public function getChannelWhere(Request $request, $id)
    {
-      $Channel = Channel::where('id', $id)->get();
+      $channel = Channel::find($id);
 
-      return response()->json($Channel);
+      if (!$channel) {
+         return response()->json([
+               'message' => 'Channel not found'
+         ], 404);
+      }
+
+      // Increase view count +1
+      $channel->increment('view');
+
+      // Refresh to return latest view count
+      $channel->refresh();
+
+      return response()->json($channel);
    }
 
    public function getFight(Request $request)
