@@ -74,12 +74,6 @@ class FightController extends Controller
             'blue_fighter' => 'required',
             'category_id' => 'required|exists:category,id',
         ]);
-        $status = $request->status ?? 1;
-
-        if ($status == 1) {
-            $this->deactivateOtherFights();
-        }
-
 
         $fight = Fight::create([
             'no' => $request->no,
@@ -90,7 +84,7 @@ class FightController extends Controller
             'blue_fighter'=> $request->blue_fighter,
             'blue_image'  => $request->blue_image ?? '',
             'blue_score'  => $request->blue_score ?? 0,
-            'status'      => $status,
+            'status'      => 0,
         ]);
 
         Alert::success('Success', 'Fight created successfully.');
@@ -133,12 +127,6 @@ class FightController extends Controller
         } else {
             $created_at = $fight->created_at;
         }
-        $status = $request->status ?? 1;
-
-        if ($status == 1) {
-            $this->deactivateOtherFights($id);
-        }
-
         $fight->update([
             'no'          => $request->no,
             'created_at'  => $created_at,
@@ -149,7 +137,7 @@ class FightController extends Controller
             'blue_fighter'=> $request->blue_fighter,
             'blue_image'  => $request->blue_image ?? '',
             'blue_score'  => $request->blue_score ?? 0,
-            'status'      => $status,
+            'status'      => 0,
         ]);
 
         Alert::success('Success', 'Fight updated successfully.');
