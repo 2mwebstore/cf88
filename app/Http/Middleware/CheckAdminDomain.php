@@ -12,11 +12,11 @@ class CheckAdminDomain
      */
     public function handle(Request $request, Closure $next)
     {
-        $allowedDomain = 'admin.cf88.me';
-        if ($request->getHost() !== $allowedDomain) {
+        // $allowedDomain = 'admin.cf88.me';
+        // if ($request->getHost() !== $allowedDomain) {
             // Redirect to homepage if not allowed
-            return redirect('/');
-        }
+            // return redirect('/');
+        // }
 
         return $next($request);
     }

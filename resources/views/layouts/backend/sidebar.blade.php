@@ -216,6 +216,21 @@
             </div>
         </li>
     {{-- @endcan --}}
+
+    {{-- @can('video-r2-upload') --}}
+    <li class="nav-item  @yield('video-r2-upload')">
+        <a class="nav-link collapsed" href="#"  data-toggle="collapse" data-target="#videoR2Upload"
+            aria-expanded="true" aria-controls="videoR2Upload">
+            <i class="fas fa-fw fa-cloud-upload-alt"></i>
+            <span>Video R2 Upload</span>
+        </a>
+        <div id="videoR2Upload" class="collapse @yield('video-r2-upload-show')" ...>
+            <div class="bg-gradient-bg py-2 collapse-inner rounded">
+                <a class="collapse-item @yield('list-video-r2-upload-light')"  href="{{ route('video-r2-upload.index') }}">List Video</a>
+            </div>
+        </div>
+    </li>
+{{-- @endcan --}}
       <!-- Nav Item - Pages Category Menu -->
     @can('setting')
       <li class="nav-item @yield('Setting-active')">

@@ -16,6 +16,7 @@ use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\NewsfeedController;
 use App\Http\Controllers\FightController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\VideoR2UploadController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,11 +28,11 @@ use App\Http\Controllers\VideoController;
 |
 */
 
-Route::domain('admin.cf88.me')->group(function () {
-    Route::get('/', function () {
-        return redirect('/dashboard');
-    });
-});
+// Route::domain('admin.cf88.me')->group(function () {
+//     Route::get('/', function () {
+//         return redirect('/dashboard');
+//     });
+// });
 
 Route::post('/logout', function () {
     Auth::logout();
@@ -73,6 +74,16 @@ Route::get('/getvideos', [VideoController::class, 'getVideos'])->name('videos.in
 Route::post('/vote/{id}', [VideoController::class, 'vote'])->name('videos.vote')->middleware('auth');
 Route::get('/getvideos/{id}', [VideoController::class, 'show']);
 Auth::routes(['register' => false]);
+
+Route::prefix('admin')->group(function () {
+    Route::get('video-r2-upload', [VideoR2UploadController::class, 'index'])->name('video-r2-upload.index');
+    Route::post('video-r2-upload', [VideoR2UploadController::class, 'store'])->name('video-r2-upload.store');
+    Route::delete('video-r2-upload/{id}', [VideoR2UploadController::class, 'destroy'])->name('video-r2-upload.destroy');
+
+    Route::post('video-r2-upload/presign-upload', [VideoR2UploadController::class, 'presignUpload'])->name('video-r2-upload.presign');
+    Route::get('video-r2-upload/list', [VideoR2UploadController::class, 'getindex'])->name('video-r2-upload.list');
+});
+ 
 
 Route::middleware(['auth', 'check.admin.domain'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard'); 
