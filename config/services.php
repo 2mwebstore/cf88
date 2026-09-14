@@ -29,5 +29,8 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'telegram' => [
+        'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET') ?? 'f5e46196faa68a06a5ff0b2748c04abe9d7d7f9835a8997c',
+    ],
 
 ];

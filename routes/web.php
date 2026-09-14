@@ -17,6 +17,9 @@ use App\Http\Controllers\NewsfeedController;
 use App\Http\Controllers\FightController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoR2UploadController;
+
+use App\Http\Controllers\TelegramWebhookController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -46,6 +49,8 @@ Route::get('/locale/{locale}', function ($locale) {
 // Route::get('/', function () {
 //     return view('auth/login');
 // });
+
+Route::post('/telegram/webhook/{secret}', [TelegramWebhookController::class, 'handle']);
 // Route::get('/article_detail/{id}', [ArticleController::class, 'view']);
 Route::get('/', [ClientController::class, 'index']);
 Route::get('/livescore', [ClientController::class, 'livescore']);
@@ -86,6 +91,7 @@ Route::prefix('admin')->group(function () {
  
 
 Route::middleware(['auth', 'check.admin.domain'])->group(function () {
+
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard'); 
 
     Route::get('/profile/{id}', [PeopleController::class, 'profile']);

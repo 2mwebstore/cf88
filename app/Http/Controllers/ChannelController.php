@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Jobs\BroadcastChannelToSubscribers;
 use App\Models\Category;
 use App\Models\Telegram;
 use App\Models\Channel;
@@ -10,6 +11,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 class ChannelController extends Controller
 {
     function __construct()
@@ -21,8 +23,6 @@ class ChannelController extends Controller
     }
     public function index(Request $request)
     {
-        // $Channel = Channel::latest()->get();
-        // return view('admin/channel/index', compact('Channel'));
         $query = Channel::query();
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
@@ -42,64 +42,15 @@ class ChannelController extends Controller
         $Topic = Topic::latest()->get();
         return view('admin/channel/create', compact('category','Topic'));
     }
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'video'       => 'required',
-    //         'title'       => 'required',
-    //         'photo'       => 'required',
-    //         'category'       => 'required',
-    //     ]);
-
-    //     $id = Channel::create([
-    //         // 'video'       => $video ?? '',
-    //         'video'      => $request->video,
-    //         'photo'      => $request->photo,
-    //         // 'photo'       => $photo ?? '',
-    //         'date'  =>date('Y-m-d H:i:s' , strtotime($request->date)),
-    //         'title'       => $request->title,
-    //         'category'    => $request->category,
-    //         'detail'      => $request->detail,
-    //         'create_by'   => Auth::user()->id,
-    //     ])->id;
-    //     $title = $request->title;
-    //     $bot_data = Bot::first();
-    //     $BotIdandToken = $bot_data->token;
-    //     $chat_id = $bot_data->chat_id;
-    //     $name_url = $bot_data->name_url;
-    //     $sponsor = $bot_data->sponsor;
-    //     $create_acc_at = $bot_data->create_acc_at;
-
-    //     $botBaseUrl = "https://api.telegram.org/bot" . $BotIdandToken . "/sendPhoto";
-    //     $photoUrl = $request->photo;
-    //     $articleUrl = $request->getSchemeAndHttpHost() . '/channels/' . urlencode($id);
-    //     $sponsorUrl = $request->getSchemeAndHttpHost();
-    //     $caption = $title . "\n"
-    //         . "[" . $name_url . "](" . $articleUrl . ")" . "\n"
-    //         . '---------------------------' . "\n"
-    //         . 'នាំមកជូនដោយ' . " : [" . $sponsor . "](" . $sponsorUrl . ")" ;
-    //         // . 'លីងបង្កើតអាខោន' . " : " . $create_acc_at;
-    //     $queryParams = [
-    //         'chat_id'    => $chat_id,
-    //         'photo'      => $photoUrl,
-    //         'caption'    => $caption,
-    //         'parse_mode' => 'Markdown'
-    //     ];
-
-    //     $botResponse = file_get_contents($botBaseUrl . '?' . http_build_query($queryParams));
-
-    //     Alert::success('Create Channel Successful');
-    //     return redirect('/channel');
-    // }
     public function store(Request $request)
     {
         // Validate required inputs
         $request->validate([
-            'video'    => 'required',
-            'message_thread_id'       => 'required',
-            'title'    => 'required',
-            'photo'    => 'required',
-            'category' => 'required',
+            'video'             => 'required',
+            'message_thread_id' => 'required',
+            'title'             => 'required',
+            'photo'             => 'required',
+            'category'          => 'required',
         ]);
 
         // Create channel and retrieve its ID
@@ -117,20 +68,17 @@ class ChannelController extends Controller
         $message_thread_id = $request->message_thread_id;
 
         $bot_data = Bot::first();
-        $token = $bot_data->token;
-        $chat_id = $bot_data->chat_id;
+        $token    = $bot_data->token;
+        $chat_id  = $bot_data->chat_id;
         $name_url = $bot_data->name_url;
-        $sponsor = $bot_data->sponsor;
-        $create_acc_at = $bot_data->create_acc_at;
-
-        // Telegram API base URL
-        $botBaseUrl = "https://api.telegram.org/bot{$token}/sendPhoto";
+        $sponsor  = $bot_data->sponsor;
 
         // Caption and article links
-        $photoUrl = $request->photo;
+        $videoUrl   = $request->video;
+        $photoUrl   = $request->photo;
         $articleUrl = 'https://cf88.news/channels/' . urlencode($id);
         $sponsorUrl = 'https://cf88.news';
-        $title = $request->title;
+        $title      = $request->title;
 
         // Markdown-formatted caption
         $caption = $title . "\n"
@@ -138,20 +86,37 @@ class ChannelController extends Controller
             . "---------------------------\n"
             . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")";
 
-        // Send Telegram photo
-        $queryParams = [
-            'chat_id'    => $chat_id,
+        $common = [
+            'chat_id'           => $chat_id,
             'message_thread_id' => $message_thread_id,
-            'photo'      => $photoUrl,
-            'caption'    => $caption,
-            'parse_mode' => 'Markdown'
+            'caption'           => $caption,
+            'parse_mode'        => 'Markdown',
         ];
 
-        // Handle Telegram API errors
-        $response = Http::get($botBaseUrl, $queryParams);
-        if ($response->failed()) {
-            \Log::error('Telegram API error:', ['response' => $response->body()]);
+        // 1) Post the video to the group topic. Telegram fetches the .mp4 by URL
+        //    (direct link, <= 20 MB). If that fails, fall back to the photo.
+        $response = Http::post("https://api.telegram.org/bot{$token}/sendVideo", $common + [
+            'video'              => $videoUrl,
+            'thumbnail'          => $photoUrl,
+            'supports_streaming' => true,
+        ]);
+
+        // Reuse Telegram's file_id for the broadcast so the file is not
+        // re-downloaded once per subscriber (and the 20 MB URL limit no longer applies).
+        $broadcastVideo = $videoUrl;
+
+        if ($response->successful()) {
+            $broadcastVideo = $response->json('result.video.file_id') ?: $videoUrl;
+        } else {
+            Log::warning('Telegram sendVideo failed, falling back to sendPhoto', ['response' => $response->body()]);
+            $response = Http::post("https://api.telegram.org/bot{$token}/sendPhoto", $common + ['photo' => $photoUrl]);
+            if ($response->failed()) {
+                Log::error('Telegram API error:', ['response' => $response->body()]);
+            }
         }
+
+        // 2) Send the same video to every user who has started the bot (queued).
+        BroadcastChannelToSubscribers::dispatch($caption, $broadcastVideo, $photoUrl);
 
         Alert::success('Create Channel Successful');
         return redirect('/channel');
