@@ -18,7 +18,6 @@ use App\Http\Controllers\FightController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoR2UploadController;
 
-use App\Http\Controllers\TelegramWebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +49,6 @@ Route::get('/locale/{locale}', function ($locale) {
 //     return view('auth/login');
 // });
 
-Route::post('/telegram/webhook/{secret}', [TelegramWebhookController::class, 'handle']);
 // Route::get('/article_detail/{id}', [ArticleController::class, 'view']);
 Route::get('/', [ClientController::class, 'index']);
 Route::get('/livescore', [ClientController::class, 'livescore']);

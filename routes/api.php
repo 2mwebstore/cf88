@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ApiController;
+use App\Http\Controllers\TelegramWebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ use App\Http\Controllers\API\ApiController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('/telegram/webhook/{secret}', [TelegramWebhookController::class, 'handle']);
 Route::get('/footer',[ApiController::class,'getFooter']);
 Route::get('/logo',[ApiController::class,'getLogo']);
 Route::get('/popular',[ApiController::class,'getPopular']);
