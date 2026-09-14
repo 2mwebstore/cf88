@@ -95,7 +95,8 @@ class ChannelController extends Controller
 
         // 1) Post the video to the group topic. Telegram fetches the .mp4 by URL
         //    (direct link, <= 20 MB). If that fails, fall back to the photo.
-        $response = Http::post("https://api.telegram.org/bot{$token}/sendVideo", $common + [
+        // $response = Http::post("https://api.telegram.org/bot{$token}/sendVideo", $common + [
+        $response = Http::post("https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/sendVideo", $common + [
             'video'              => $videoUrl,
             'thumbnail'          => $photoUrl,
             'supports_streaming' => true,
@@ -109,7 +110,8 @@ class ChannelController extends Controller
             $broadcastVideo = $response->json('result.video.file_id') ?: $videoUrl;
         } else {
             Log::warning('Telegram sendVideo failed, falling back to sendPhoto', ['response' => $response->body()]);
-            $response = Http::post("https://api.telegram.org/bot{$token}/sendPhoto", $common + ['photo' => $photoUrl]);
+            // $response = Http::post("https://api.telegram.org/bot{$token}/sendPhoto", $common + ['photo' => $photoUrl]);
+            $response = Http::post("https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/sendPhoto", $common + ['photo' => $photoUrl]);
             if ($response->failed()) {
                 Log::error('Telegram API error:', ['response' => $response->body()]);
             }
