@@ -95,6 +95,8 @@
                     </div>
                 </div>
 
+
+
                 <!-- Red Score -->
                 <div class="col-md-6">
                     <div class="form-group">
@@ -117,7 +119,13 @@
                         <input type="number" class="form-control" id="no" name="no" required value="{{ $fight->no }}">
                     </div>
                 </div>
-
+                <!-- Thumbnail -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="thumbnail_link" class="label-text">Thumbnail Link</label>
+                        <input type="text" class="form-control" id="thumbnail_link" name="thumbnail_link" value="{{ $fight->thumbnail_link }}">
+                    </div>
+                </div>
                 <!-- Submit Buttons -->
                 <div class="col-md-12">
                     <button type="submit" class="btn btn-sila btn-sm">Update Fight</button>

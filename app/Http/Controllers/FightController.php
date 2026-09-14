@@ -84,6 +84,7 @@ class FightController extends Controller
             'blue_fighter'=> $request->blue_fighter,
             'blue_image'  => $request->blue_image ?? '',
             'blue_score'  => $request->blue_score ?? 0,
+            'thumbnail_link' => $request->thumbnail_link ?? '',
             'status'      => 0,
         ]);
 
@@ -127,6 +128,12 @@ class FightController extends Controller
         } else {
             $created_at = $fight->created_at;
         }
+        // $status = $request->status ?? 1;
+
+        // if ($status == 1) {
+        //     $this->deactivateOtherFights($id);
+        // }
+
         $fight->update([
             'no'          => $request->no,
             'created_at'  => $created_at,
@@ -137,6 +144,7 @@ class FightController extends Controller
             'blue_fighter'=> $request->blue_fighter,
             'blue_image'  => $request->blue_image ?? '',
             'blue_score'  => $request->blue_score ?? 0,
+            'thumbnail_link' => $request->thumbnail_link ?? '',
             'status'      => 0,
         ]);
 

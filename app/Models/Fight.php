@@ -21,6 +21,7 @@ class Fight extends Model
         'blue_score',
         'status',
         'category_id',
+        'thumbnail_link',
         'created_at',
     ];
     public function category()
