@@ -6,6 +6,7 @@ use App\Models\Bot;
 use App\Models\BotSubscriber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TelegramWebhookController extends Controller
 {
@@ -35,8 +36,20 @@ class TelegramWebhookController extends Controller
         }
 
         $chat = $message['chat'] ?? [];
+
         if (($chat['type'] ?? '') !== 'private') {
-            return response('ok'); // ignore groups / channels
+            // Log group/supergroup/channel messages so the correct chat_id and
+            // message_thread_id (topic) can be read straight from the app logs,
+            // with no need to ever toggle the webhook off.
+            Log::info('Telegram group message received', [
+                'chat_id'            => $chat['id'] ?? null,
+                'chat_type'          => $chat['type'] ?? null,
+                'chat_title'         => $chat['title'] ?? null,
+                'message_thread_id'  => $message['message_thread_id'] ?? null,
+                'is_topic_message'   => $message['is_topic_message'] ?? false,
+                'text'               => $message['text'] ?? null,
+            ]);
+            return response('ok'); // ignore groups / channels for subscriber tracking
         }
 
         $text = $message['text'] ?? '';
@@ -52,8 +65,7 @@ class TelegramWebhookController extends Controller
 
             $token = optional(Bot::first())->token;
             if ($token) {
-                // Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
-                Http::post("https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/sendMessage", [
+                Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
                     'chat_id' => $chat['id'],
                     'text'    => "ស្វាគមន៍! អ្នកនឹងទទួលបានវីដេអូថ្មីៗនៅទីនេះ។\nWelcome! You will receive new videos here.",
                 ]);
