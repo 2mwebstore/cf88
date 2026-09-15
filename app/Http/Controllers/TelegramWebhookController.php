@@ -52,7 +52,8 @@ class TelegramWebhookController extends Controller
 
             $token = optional(Bot::first())->token;
             if ($token) {
-                Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
+                // Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
+                Http::post("https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/sendMessage", [
                     'chat_id' => $chat['id'],
                     'text'    => "ស្វាគមន៍! អ្នកនឹងទទួលបានវីដេអូថ្មីៗនៅទីនេះ។\nWelcome! You will receive new videos here.",
                 ]);

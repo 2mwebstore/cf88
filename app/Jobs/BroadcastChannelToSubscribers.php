@@ -31,7 +31,8 @@ class BroadcastChannelToSubscribers implements ShouldQueue
 
     public function handle(): void
     {
-        $token = optional(Bot::first())->token;
+        // $token = optional(Bot::first())->token;
+        $token = "8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY";
         if (!$token) {
             Log::error('Broadcast skipped: no bot token');
             return;

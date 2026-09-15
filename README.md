@@ -62,3 +62,12 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 
 composer require league/flysystem-aws-s3-v3 "^1.0"
+
+
+DB_CONNECTION=mysql \
+DB_HOST=ballast.proxy.rlwy.net \
+DB_PORT=50015 \
+DB_DATABASE=railway \
+DB_USERNAME=root \
+DB_PASSWORD='OiFYONJwLBtwliXgCFVfLXqayzYvXNmN' \
+php artisan migrate --force

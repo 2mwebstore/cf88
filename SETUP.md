@@ -50,7 +50,7 @@ Replace `<TOKEN>` with the bot token from your `bots` table and `<SECRET>` with 
 ```
 curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://cf88.news/api/telegram/webhook/<SECRET>&allowed_updates=%5B%22message%22%2C%22my_chat_member%22%5D"
 
-curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/setWebhook?url=https://cf88-production.up.railway.app/api/telegram/webhook/f5e46196faa68a06a5ff0b2748c04abe9d7d7f9835a8997c&allowed_updates=%5B%22message%22%2C%22my_chat_member%22%5D"
+curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/setWebhook?url=https://cf88-production.up.railway.app/api/telegram/webhook/f5e46196faa68a06a5ff0b2748c04abe9d7d7f9835a8997c%&allowed_updates=%5B%22message%22%2C%22my_chat_member%22%5D"
 
 curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/getWebhookInfo"
 ```
@@ -87,3 +87,10 @@ Then `supervisorctl reread && supervisorctl update`.
 - Video by URL must be a direct `.mp4` link ≤ 20 MB. The group post reuses Telegram's `file_id` for the broadcast, so subscribers get the video even if it's large — as long as the first send succeeded. If the first send fails, everyone falls back to the photo.
 - Users who block the bot are marked `active = 0` automatically and skipped next time.
 - Rate: ~20 messages/sec. 5,000 subscribers ≈ 4–5 minutes.
+
+
+curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/deleteWebhook?drop_pending_updates=true"
+
+curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/setWebhook?url=https://cf88-production.up.railway.app/api/telegram/webhook/f5e46196faa68a06a5ff0b2748c04abe9d7d7f9835a8997c&allowed_updates=%5B%22message%22%2C%22my_chat_member%22%5D"
+
+curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/getWebhookInfo"
