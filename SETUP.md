@@ -91,7 +91,7 @@ Then `supervisorctl reread && supervisorctl update`.
 
 curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/deleteWebhook?drop_pending_updates=true"
 
-curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/setWebhook?url=https://cf88-production.up.railway.app/api/telegram/webhook/f5e46196faa68a06a5ff0b2748c04abe9d7d7f9835a8997c&allowed_updates=%5B%22message%22%2C%22my_chat_member%22%5D"
+curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/setWebhook?url=https://cf88-production.up.railway.app/api/telegram/webhook/f9b849e40e44ab2d4a6ca11085c652b0759dc434d5815ead%&allowed_updates=%5B%22message%22%2C%22my_chat_member%22%5D"
 
 curl "https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/getWebhookInfo"
 
