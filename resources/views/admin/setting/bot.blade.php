@@ -25,13 +25,13 @@
     <div class="card-header py-3 bg-gradient-best">
 
         <h6 class="m-0 font-weight-bold text-primary">
-            @if ($bot->isEmpty())
+            {{-- @if ($bot->isEmpty()) --}}
                 <button id="add_bot" type="submit" class="btn btn-sila" data-bs-toggle="modal" data-bs-target="#meme">
 
                     Add Bot
 
                 </button>
-            @endif
+            {{-- @endif --}}
 
         </h6>
 
