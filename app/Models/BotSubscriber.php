@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BotSubscriber extends Model
 {
-    protected $fillable = ['chat_id', 'username', 'first_name', 'active'];
+    protected $fillable = [ 'bot_id', 'token', 'chat_id', 'username', 'first_name', 'active' ];
 
     protected $casts = [
         'active' => 'boolean',
