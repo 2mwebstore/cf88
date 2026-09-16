@@ -31,9 +31,11 @@ class TelegramWebhookController extends Controller
             $chat   = $request->input('my_chat_member.chat');
             $status = $request->input('my_chat_member.new_chat_member.status');
             if (($chat['type'] ?? '') === 'private') {
-                BotSubscriber::where('bot_id', $bot->id)
-                    ->where('chat_id', $chat['id'])
-                    ->update(['active' => $status !== 'kicked']);
+                BotSubscriber::where('chat_id', $chat['id'])
+                    ->update([
+                        'bot_id' => $bot->id,
+                        'active' => $status !== 'kicked',
+                    ]);
             }
             return response('ok');
         }
@@ -64,11 +66,9 @@ class TelegramWebhookController extends Controller
         $text = $message['text'] ?? '';
         if (str_starts_with($text, '/start')) {
             BotSubscriber::updateOrCreate(
+                ['chat_id' => $chat['id']],
                 [
-                    'bot_id'  => $bot->id,
-                    'chat_id' => $chat['id'],
-                ],
-                [
+                    'bot_id'     => $bot->id,
                     'username'   => $chat['username'] ?? null,
                     'first_name' => $chat['first_name'] ?? null,
                     'active'     => true,
