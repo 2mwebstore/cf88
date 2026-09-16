@@ -67,62 +67,66 @@ class ChannelController extends Controller
         // Prepare Telegram bot data
         $message_thread_id = $request->message_thread_id;
 
-        $bot_data      = Bot::first();
-        $chat_id       = $bot_data->chat_id;
-        $token         = $bot_data->token;
-        $name_url      = $bot_data->name_url;
-        $link_url      = $bot_data->link_url;
-        $sponsor       = $bot_data->sponsor;
-        $telegram      = $bot_data->telegram;
-        $create_acc_at = $bot_data->create_acc_at;
-
-        $botToken = $token;
-
-        // Caption and article links
-        $videoUrl   = $request->video;
-        $photoUrl   = $request->photo;
-        $articleUrl = $link_url . '/channels/' . urlencode($id);
-        $sponsorUrl = $link_url;
-        $title      = $request->title;
-
-        // Markdown-formatted caption
-        $caption = $title . "\n"
-            . "[" . $name_url . "](" . $articleUrl . ")" . "\n"
-            . "---------------------------\n"
-            . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")" . "\n"
-            . "Telegram : [" . $name_url . "](" . $telegram . ")";
-
-        $common = [
-            'chat_id'           => $chat_id,
-            'message_thread_id' => $message_thread_id,
-            'caption'           => $caption,
-            'parse_mode'        => 'Markdown',
-        ];
-
-        // 1) Post the video to the group topic. Telegram fetches the .mp4 by URL
-        //    (direct link, <= 20 MB). If that fails, fall back to the photo.
-        $response = Http::post("https://api.telegram.org/bot{$botToken}/sendVideo", $common + [
-            'video'              => $videoUrl,
-            'thumbnail'          => $photoUrl,
-            'supports_streaming' => true,
-        ]);
-
-        // Reuse Telegram's file_id for the broadcast so the file is not
-        // re-downloaded once per subscriber (and the 20 MB URL limit no longer applies).
-        $broadcastVideo = $videoUrl;
-
-        if ($response->successful()) {
-            $broadcastVideo = $response->json('result.video.file_id') ?: $videoUrl;
-        } else {
-            Log::warning('Telegram sendVideo failed, falling back to sendPhoto', ['response' => $response->body()]);
-            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendPhoto", $common + ['photo' => $photoUrl]);
-            if ($response->failed()) {
-                Log::error('Telegram API error:', ['response' => $response->body()]);
-            }
+        $bots = Bot::all();
+        if ($bots->isEmpty()) {
+            Log::error('Channel created but no bots configured; nothing posted or broadcast.', ['channel_id' => $id]);
         }
 
-        // 2) Send the same video to every user who has started the bot (queued).
-        BroadcastChannelToSubscribers::dispatch($caption, $broadcastVideo, $photoUrl, $bot_data->id);
+        foreach ($bots as $bot_data) {
+            $botToken = $bot_data->token;
+            $chat_id  = $bot_data->chat_id;
+            $name_url = $bot_data->name_url;
+            $link_url = $bot_data->link_url;
+            $sponsor  = $bot_data->sponsor;
+            $telegram = $bot_data->telegram;
+
+            // Caption and article links
+            $videoUrl   = $request->video;
+            $photoUrl   = $request->photo;
+            $articleUrl = $link_url . '/channels/' . urlencode($id);
+            $sponsorUrl = $link_url;
+            $title      = $request->title;
+
+            // Markdown-formatted caption
+            $caption = $title . "\n"
+                . "[" . $name_url . "](" . $articleUrl . ")" . "\n"
+                . "---------------------------\n"
+                . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")" . "\n"
+                . "Telegram : [" . $name_url . "](" . $telegram . ")";
+
+            $common = [
+                'chat_id'           => $chat_id,
+                'message_thread_id' => $message_thread_id,
+                'caption'           => $caption,
+                'parse_mode'        => 'Markdown',
+            ];
+
+            // 1) Post the video to this bot's group topic. Telegram fetches the .mp4 by URL
+            //    (direct link, <= 20 MB). If that fails, fall back to the photo.
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendVideo", $common + [
+                'video'              => $videoUrl,
+                'thumbnail'          => $photoUrl,
+                'supports_streaming' => true,
+            ]);
+
+            // Reuse this bot's own Telegram file_id for its broadcast so the file is not
+            // re-downloaded once per subscriber. A file_id from one bot cannot be used by
+            // another bot's token, so this must be fetched fresh per bot.
+            $broadcastVideo = $videoUrl;
+
+            if ($response->successful()) {
+                $broadcastVideo = $response->json('result.video.file_id') ?: $videoUrl;
+            } else {
+                Log::warning('Telegram sendVideo failed, falling back to sendPhoto', ['bot_id' => $bot_data->id, 'response' => $response->body()]);
+                $response = Http::post("https://api.telegram.org/bot{$botToken}/sendPhoto", $common + ['photo' => $photoUrl]);
+                if ($response->failed()) {
+                    Log::error('Telegram API error:', ['bot_id' => $bot_data->id, 'response' => $response->body()]);
+                }
+            }
+
+            // 2) Send the same video to every user who has started this bot (queued).
+            BroadcastChannelToSubscribers::dispatch($caption, $broadcastVideo, $photoUrl, $bot_data->id);
+        }
 
         Alert::success('Create Channel Successful');
         return redirect('/channel');

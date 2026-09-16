@@ -15,15 +15,13 @@ class TelegramWebhookController extends Controller
      * /start so the bot can broadcast to them later, and marks subscribers
      * inactive when they block the bot.
      *
-     * There is only ever a single Bot row (admin edits its token in place),
-     * so its id is stable even when the token changes. Subscribers are
-     * tagged with that stable bot_id so the broadcast jobs can find them.
+     * Multi-bot: each bot has its own token, and each bot's setWebhook URL
+     * embeds that token (e.g. /telegram/webhook/{token}), so the token in
+     * the URL is what identifies which bot an incoming update belongs to.
      */
-    public function handle(Request $request, string $secret)
+    public function handle(Request $request, string $token)
     {
-        abort_unless(hash_equals((string) config('services.telegram.webhook_secret'), $secret), 403);
-
-        $bot = Bot::first();
+        $bot = Bot::where('token', $token)->first();
         abort_unless($bot, 404);
 
         // User blocked / unblocked the bot
@@ -31,11 +29,9 @@ class TelegramWebhookController extends Controller
             $chat   = $request->input('my_chat_member.chat');
             $status = $request->input('my_chat_member.new_chat_member.status');
             if (($chat['type'] ?? '') === 'private') {
-                BotSubscriber::where('chat_id', $chat['id'])
-                    ->update([
-                        'bot_id' => $bot->id,
-                        'active' => $status !== 'kicked',
-                    ]);
+                BotSubscriber::where('bot_id', $bot->id)
+                    ->where('chat_id', $chat['id'])
+                    ->update(['active' => $status !== 'kicked']);
             }
             return response('ok');
         }
@@ -66,9 +62,11 @@ class TelegramWebhookController extends Controller
         $text = $message['text'] ?? '';
         if (str_starts_with($text, '/start')) {
             BotSubscriber::updateOrCreate(
-                ['chat_id' => $chat['id']],
                 [
-                    'bot_id'     => $bot->id,
+                    'bot_id'  => $bot->id,
+                    'chat_id' => $chat['id'],
+                ],
+                [
                     'username'   => $chat['username'] ?? null,
                     'first_name' => $chat['first_name'] ?? null,
                     'active'     => true,
