@@ -125,13 +125,14 @@ class FightController extends Controller
 
             // Sponsor URL
             $sponsorUrl = $link_url;
+            $group= 'Group';
 
             // Telegram caption
             $caption = $title . "\n"
                 . "[" . $name_url . "](" . $articleUrl . ")\n"
                 . "---------------------------\n"
                 . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")\n"
-                . "Telegram : [" . $name_url . "](" . $telegram . ")";
+                . "Telegram : [" . $group . "](" . $telegram . ")";
 
             // Send photo to Telegram
             $response = Http::post(

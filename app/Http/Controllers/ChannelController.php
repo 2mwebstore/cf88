@@ -86,13 +86,14 @@ class ChannelController extends Controller
             $articleUrl = $link_url . '/channels/' . urlencode($id);
             $sponsorUrl = $link_url;
             $title      = $request->title;
+            $group= 'Group';
 
             // Markdown-formatted caption
             $caption = $title . "\n"
                 . "[" . $name_url . "](" . $articleUrl . ")" . "\n"
                 . "---------------------------\n"
                 . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")" . "\n"
-                . "Telegram : [" . $name_url . "](" . $telegram . ")";
+                . "Telegram : [" . $group . "](" . $telegram . ")";
 
             $common = [
                 'chat_id'           => $chat_id,
