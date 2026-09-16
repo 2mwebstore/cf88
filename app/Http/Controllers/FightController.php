@@ -75,35 +75,38 @@ class FightController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'no' => 'required',
-            'red_fighter' => 'required',
-            'blue_fighter' => 'required',
-            'category_id' => 'required|exists:category,id',
-            'message_thread_id' => 'required',
+            'no'            => 'required',
+            'red_fighter'   => 'required',
+            'blue_fighter'  => 'required',
+            'category_id'   => 'required|exists:category,id',
         ]);
 
+        // Create fight
         $fight = Fight::create([
-            'no' => $request->no,
-            'category_id' => $request->category_id,
-            'red_fighter' => $request->red_fighter,
-            'red_image'   => $request->red_image ?? '',
-            'red_score'   => $request->red_score ?? 0,
-            'blue_fighter'=> $request->blue_fighter,
-            'blue_image'  => $request->blue_image ?? '',
-            'blue_score'  => $request->blue_score ?? 0,
-            'thumbnail_link' => $request->thumbnail_link ?? '',
-            'status'      => 0,
+            'no'              => $request->no,
+            'category_id'     => $request->category_id,
+            'red_fighter'     => $request->red_fighter,
+            'red_image'       => $request->red_image ?? '',
+            'red_score'       => $request->red_score ?? 0,
+            'blue_fighter'    => $request->blue_fighter,
+            'blue_image'      => $request->blue_image ?? '',
+            'blue_score'      => $request->blue_score ?? 0,
+            'thumbnail_link'  => $request->thumbnail_link ?? '',
+            'status'          => 0,
         ]);
 
-        // Prepare Telegram bot data
-        $message_thread_id = $request->message_thread_id;
-
+        // Get all configured Telegram bots
         $bots = Bot::all();
+
         if ($bots->isEmpty()) {
-            Log::error('Fight created but no bots configured; nothing posted or broadcast.', ['fight_id' => $fight->id]);
+            Log::warning(
+                'Fight created but no bots configured; nothing posted or broadcast.',
+                ['fight_id' => $fight->id]
+            );
         }
 
         foreach ($bots as $bot_data) {
+
             $token    = $bot_data->token;
             $chat_id  = $bot_data->chat_id;
             $name_url = $bot_data->name_url;
@@ -111,37 +114,54 @@ class FightController extends Controller
             $sponsor  = $bot_data->sponsor;
             $telegram = $bot_data->telegram;
 
-            // Combine Red Fighter and Blue Fighter into the caption title
-            $title      = $request->red_fighter . ' VS ' . $request->blue_fighter;
-            $photoUrl   = $request->thumbnail_link;
-            $articleUrl = $link_url . '/fights/' . urlencode($fight->id);
+            // Fight title
+            $title = $request->red_fighter . ' VS ' . $request->blue_fighter;
+
+            // Image
+            $photoUrl = $request->thumbnail_link;
+
+            // Fight page URL
+            $articleUrl = rtrim($link_url, '/') . '/fights/' . urlencode($fight->id);
+
+            // Sponsor URL
             $sponsorUrl = $link_url;
 
+            // Telegram caption
             $caption = $title . "\n"
-                . "[" . $name_url . "](" . $articleUrl . ")" . "\n"
+                . "[" . $name_url . "](" . $articleUrl . ")\n"
                 . "---------------------------\n"
-                . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")" . "\n"
+                . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")\n"
                 . "Telegram : [" . $name_url . "](" . $telegram . ")";
 
-            $common = [
-                'chat_id'           => $chat_id,
-                'message_thread_id' => $message_thread_id,
-                'caption'           => $caption,
-                'parse_mode'        => 'Markdown',
-            ];
+            // Send photo to Telegram
+            $response = Http::post(
+                "https://api.telegram.org/bot{$token}/sendPhoto",
+                [
+                    'chat_id'    => $chat_id,
+                    'photo'      => $photoUrl,
+                    'caption'    => $caption,
+                    'parse_mode' => 'Markdown',
+                ]
+            );
 
-            $response = Http::post("https://api.telegram.org/bot{$token}/sendPhoto", $common + [
-                'photo' => $photoUrl,
-            ]);
             if ($response->failed()) {
-                Log::error('Telegram API error:', ['bot_id' => $bot_data->id, 'response' => $response->body()]);
+                Log::error('Telegram API error', [
+                    'bot_id'   => $bot_data->id,
+                    'chat_id'  => $chat_id,
+                    'response' => $response->body(),
+                ]);
             }
 
-            // Broadcast the fight to every subscriber of this bot who has started it (queued).
-            BroadcastFightToSubscribers::dispatch($caption, $photoUrl, $bot_data->id);
+            // Broadcast the fight to subscribers
+            BroadcastFightToSubscribers::dispatch(
+                $caption,
+                $photoUrl,
+                $bot_data->id
+            );
         }
 
         Alert::success('Success', 'Fight created successfully.');
+
         return redirect()->route('fights');
     }
         public function setActive($id)
