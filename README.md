@@ -71,3 +71,8 @@ DB_DATABASE=railway \
 DB_USERNAME=root \
 DB_PASSWORD='OiFYONJwLBtwliXgCFVfLXqayzYvXNmN' \
 php artisan migrate --force
+
+
+sila@Mac cf88 % git add .
+sila@Mac cf88 % git commit -m "fix: update login device"                                                                                    
+git push origin main

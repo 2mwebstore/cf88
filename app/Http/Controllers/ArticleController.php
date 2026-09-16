@@ -17,7 +17,7 @@ class ArticleController extends Controller
          $this->middleware('permission:article-list', ['only' => ['index']]);
          $this->middleware('permission:article-create', ['only' => ['create','store']]);
          $this->middleware('permission:article-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:article-delete', ['only' => ['question','destroy']]);
+         $this->middleware('permission:article-delete', ['only' => ['question','destroy','bulkDestroy','deleteOld']]);
     }
     /**
      * Display a listing of the resource.
@@ -385,6 +385,76 @@ class ArticleController extends Controller
          Alert::success('Successful', 'Article is Deleted');
          return redirect('/article');
      }
+
+     public function bulkDestroy(Request $request)
+     {
+         $ids = $request->input('ids', []);
+
+         if (empty($ids)) {
+             Alert::error('Failed', 'No Article selected');
+             return redirect('/article');
+         }
+
+         $articles = Article::whereIn('id', $ids)->get();
+
+         foreach ($articles as $article) {
+             File::delete('upload' . $article->photo);
+             File::delete('upload' . $article->photo1);
+             File::delete('upload' . $article->photo2);
+             File::delete('upload' . $article->photo3);
+             File::delete('upload' . $article->photo4);
+             File::delete('upload' . $article->photo5);
+             File::delete('upload' . $article->photo6);
+             File::delete('upload' . $article->photo7);
+             File::delete('upload' . $article->photo8);
+             File::delete('upload' . $article->photo9);
+             File::delete('upload' . $article->photo10);
+             File::delete('upload' . $article->photo11);
+             File::delete('upload' . $article->photo12);
+             File::delete('upload' . $article->photo13);
+         }
+
+         Article::whereIn('id', $ids)->delete();
+
+         Alert::success('Successful', count($ids) . ' Article(s) Deleted');
+         return redirect('/article');
+     }
+
+     public function deleteOld($months)
+     {
+         $months = (int) $months;
+         if (!in_array($months, [1, 3])) {
+             Alert::error('Failed', 'Invalid period');
+             return redirect('/article');
+         }
+
+         $cutoff = now()->subMonths($months);
+
+         $articles = Article::where('date', '<', $cutoff)->get();
+
+         foreach ($articles as $article) {
+             File::delete('upload' . $article->photo);
+             File::delete('upload' . $article->photo1);
+             File::delete('upload' . $article->photo2);
+             File::delete('upload' . $article->photo3);
+             File::delete('upload' . $article->photo4);
+             File::delete('upload' . $article->photo5);
+             File::delete('upload' . $article->photo6);
+             File::delete('upload' . $article->photo7);
+             File::delete('upload' . $article->photo8);
+             File::delete('upload' . $article->photo9);
+             File::delete('upload' . $article->photo10);
+             File::delete('upload' . $article->photo11);
+             File::delete('upload' . $article->photo12);
+             File::delete('upload' . $article->photo13);
+         }
+
+         $count = Article::where('date', '<', $cutoff)->delete();
+
+         Alert::success('Successful', $count . ' Article(s) older than ' . $months . ' month(s) deleted');
+         return redirect('/article');
+     }
+
      public function View($id)
      {
             $article = Article::whereId($id)->first();
@@ -407,4 +477,3 @@ class ArticleController extends Controller
             return view('admin/article/view', compact('data','shareComponent'));
      }
 }
-

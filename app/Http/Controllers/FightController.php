@@ -161,4 +161,37 @@ class FightController extends Controller
         Alert::success('Success', 'Fight deleted successfully.');
         return redirect()->route('fights');
     }
+
+    // Bulk delete selected fights
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            Alert::error('Failed', 'No Fight selected');
+            return redirect()->route('fights');
+        }
+
+        Fight::whereIn('id', $ids)->delete();
+
+        Alert::success('Success', count($ids) . ' Fight(s) deleted successfully.');
+        return redirect()->route('fights');
+    }
+
+    // Delete fights older than 1 or 3 months (keeps status=1 active fight untouched only if not in range; still deletes if old)
+    public function deleteOld($months)
+    {
+        $months = (int) $months;
+        if (!in_array($months, [1, 3])) {
+            Alert::error('Failed', 'Invalid period');
+            return redirect()->route('fights');
+        }
+
+        $cutoff = now()->subMonths($months);
+
+        $count = Fight::where('created_at', '<', $cutoff)->delete();
+
+        Alert::success('Success', $count . ' Fight(s) older than ' . $months . ' month(s) deleted.');
+        return redirect()->route('fights');
+    }
 }

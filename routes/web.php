@@ -85,6 +85,8 @@ Route::prefix('admin')->group(function () {
 
     Route::post('video-r2-upload/presign-upload', [VideoR2UploadController::class, 'presignUpload'])->name('video-r2-upload.presign');
     Route::get('video-r2-upload/list', [VideoR2UploadController::class, 'getindex'])->name('video-r2-upload.list');
+    Route::delete('/video-r2-upload/bulk-destroy', [VideoR2UploadController::class, 'bulkDestroy'])->name('video-r2-upload.bulkDestroy');
+    Route::delete('/video-r2-upload/delete-old/{months}', [VideoR2UploadController::class, 'deleteOld'])->name('video-r2-upload.deleteOld');
 });
  
 
@@ -134,6 +136,8 @@ Route::middleware(['auth', 'check.admin.domain'])->group(function () {
     Route::delete('/channel/{id}/destroy', [ChannelController::class, 'destroy'])->name('channel.destroy');
     Route::get('/channel/{id}/edit', [ChannelController::class, 'edit']);
     Route::patch('/channel/{id}/update', [ChannelController::class, 'update']);
+    Route::delete('/channel/bulk-destroy', [ChannelController::class, 'bulkDestroy'])->name('channel.bulkDestroy');
+    Route::delete('/channel/delete-old/{months}', [ChannelController::class, 'deleteOld'])->name('channel.deleteOld');
     //Newsfeed
     Route::get('/newsfeed', [NewsfeedController::class,'index'])->name('newsfeed');
     Route::get('/newsfeed/create', [NewsfeedController::class, 'create'])->name('newsfeed/create');
@@ -158,6 +162,8 @@ Route::middleware(['auth', 'check.admin.domain'])->group(function () {
     Route::get('/fight/{id}/edit', [FightController::class, 'edit'])->name('fights.edit');
     Route::patch('/fight/{id}/update', [FightController::class, 'update'])->name('fights.update');
     Route::post('/fights/{id}/set-active', [FightController::class, 'setActive'])->name('fights.setActive');
+    Route::delete('/fights/bulk-destroy', [FightController::class, 'bulkDestroy'])->name('fights.bulkDestroy');
+    Route::delete('/fights/delete-old/{months}', [FightController::class, 'deleteOld'])->name('fights.deleteOld');
 
     //Article
     Route::get('/article', [ArticleController::class,'index'])->name('article');
@@ -167,6 +173,8 @@ Route::middleware(['auth', 'check.admin.domain'])->group(function () {
     Route::delete('/article/{id}/destroy', [ArticleController::class, 'destroy'])->name('article.destroy');
     Route::get('/article/{id}/edit', [ArticleController::class, 'edit']);
     Route::patch('/article/{id}/update', [ArticleController::class, 'update']);
+    Route::delete('/article/bulk-destroy', [ArticleController::class, 'bulkDestroy'])->name('article.bulkDestroy');
+    Route::delete('/article/delete-old/{months}', [ArticleController::class, 'deleteOld'])->name('article.deleteOld');
 
     //banner
     Route::get('/banner', [BannerController::class,'index'])->name('banner');

@@ -78,12 +78,103 @@
                             <div class="col-md-12">
                                 <button class="btn btn-primary text-white">Filter  <i class="fas fa-filter"></i></button>
                                 <a href="/channel" class="btn btn-danger text-white">Clear  <i class="fas fa-sync-alt"></i></a>
+                                @can('channel-delete')
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#deleteOldModal1">
+                                    <i class="fas fa-trash"></i> Delete Keep 1 Month
+                                </button>
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#deleteOldModal3">
+                                    <i class="fas fa-trash"></i> Delete Keep 3 Month
+                                </button>
+                                @endcan
                             </div>
                         </div>
 
                 </form>
 
+                @can('channel-delete')
+                <div class="modal fade" id="deleteOldModal1" tabindex="-1" aria-labelledby="deleteOldModal1Label" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning">
+                                <h5 class="modal-title" id="deleteOldModal1Label">Confirm Delete</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Delete all Channels older than <strong>1 month</strong>? This will keep only Channels from the last 1 month.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <form action="{{ route('channel.deleteOld', 1) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-warning">Yes, Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteOldModal3" tabindex="-1" aria-labelledby="deleteOldModal3Label" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning">
+                                <h5 class="modal-title" id="deleteOldModal3Label">Confirm Delete</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Delete all Channels older than <strong>3 months</strong>? This will keep only Channels from the last 3 months.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <form action="{{ route('channel.deleteOld', 3) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-warning">Yes, Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endcan
+
             <div class="card-body">
+
+                @can('channel-delete')
+                <form id="bulkDeleteForm" action="{{ route('channel.bulkDestroy') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div id="bulkDeleteIdsContainer"></div>
+                    <div class="mb-2">
+                        <button type="button" id="bulkDeleteBtn" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#bulkDeleteModal" disabled>
+                            <i class="fas fa-trash"></i> Delete Selected (<span id="selectedCount">0</span>)
+                        </button>
+                    </div>
+                </form>
+
+                <div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="bulkDeleteModalLabel">Confirm Delete</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete <strong><span id="selectedCountModal">0</span></strong> selected Channel(s)?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" id="confirmBulkDeleteBtn" class="btn btn-danger">Yes, Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endcan
 
                 <div class="table-responsive">
 
@@ -92,7 +183,9 @@
                         <thead class="text-write bg-gradient-sila">
 
                             <tr>
-
+                                @can('channel-delete')
+                                <th width="1%"><input type="checkbox" id="selectAllCheckbox"></th>
+                                @endcan
                                 <th>No</th>
 
                                 <th>Banner</th>
@@ -117,7 +210,9 @@
                             @foreach ($Channel as $row)
 
                             <tr>
-
+                                @can('channel-delete')
+                                <td width="1%"><input type="checkbox" class="rowCheckbox" value="{{ $row->id }}"></td>
+                                @endcan
                                 <th scope="row"  width="1%">{{$loop->iteration}}</th>
 
                                 <td id="img-limit">
@@ -243,4 +338,59 @@
             </div>
 
         </div>
+@push('js')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var selectAll = document.getElementById('selectAllCheckbox');
+    var rowCheckboxes = document.querySelectorAll('.rowCheckbox');
+    var bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    var selectedCount = document.getElementById('selectedCount');
+    var selectedCountModal = document.getElementById('selectedCountModal');
+    var confirmBulkDeleteBtn = document.getElementById('confirmBulkDeleteBtn');
+    var bulkDeleteForm = document.getElementById('bulkDeleteForm');
+    var bulkDeleteIdsContainer = document.getElementById('bulkDeleteIdsContainer');
+
+    function updateSelectedCount() {
+        var checked = document.querySelectorAll('.rowCheckbox:checked');
+        var count = checked.length;
+        if (selectedCount) selectedCount.textContent = count;
+        if (selectedCountModal) selectedCountModal.textContent = count;
+        if (bulkDeleteBtn) bulkDeleteBtn.disabled = count === 0;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            rowCheckboxes.forEach(function (cb) {
+                cb.checked = selectAll.checked;
+            });
+            updateSelectedCount();
+        });
+    }
+
+    rowCheckboxes.forEach(function (cb) {
+        cb.addEventListener('change', function () {
+            if (!cb.checked && selectAll) {
+                selectAll.checked = false;
+            }
+            updateSelectedCount();
+        });
+    });
+
+    if (confirmBulkDeleteBtn) {
+        confirmBulkDeleteBtn.addEventListener('click', function () {
+            var checked = document.querySelectorAll('.rowCheckbox:checked');
+            bulkDeleteIdsContainer.innerHTML = '';
+            checked.forEach(function (cb) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids[]';
+                input.value = cb.value;
+                bulkDeleteIdsContainer.appendChild(input);
+            });
+            bulkDeleteForm.submit();
+        });
+    }
+});
+</script>
+@endpush
 @stop

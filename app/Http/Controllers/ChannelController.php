@@ -19,7 +19,7 @@ class ChannelController extends Controller
          $this->middleware('permission:channel-list', ['only' => ['index']]);
          $this->middleware('permission:channel-create', ['only' => ['create','store']]);
          $this->middleware('permission:channel-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:channel-delete', ['only' => ['question','destroy']]);
+         $this->middleware('permission:channel-delete', ['only' => ['question','destroy','bulkDestroy','deleteOld']]);
     }
     public function index(Request $request)
     {
@@ -137,6 +137,49 @@ class ChannelController extends Controller
         File::delete('upload' . $channel->photo);
         $channel->delete();
         Alert::success('Successful', 'Channel is Deleted');
+        return redirect('/channel');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            Alert::error('Failed', 'No Channel selected');
+            return redirect('/channel');
+        }
+
+        $channels = Channel::select('id', 'photo')->whereIn('id', $ids)->get();
+
+        foreach ($channels as $channel) {
+            File::delete('upload' . $channel->photo);
+        }
+
+        Channel::whereIn('id', $ids)->delete();
+
+        Alert::success('Successful', count($ids) . ' Channel(s) Deleted');
+        return redirect('/channel');
+    }
+
+    public function deleteOld($months)
+    {
+        $months = (int) $months;
+        if (!in_array($months, [1, 3])) {
+            Alert::error('Failed', 'Invalid period');
+            return redirect('/channel');
+        }
+
+        $cutoff = now()->subMonths($months);
+
+        $channels = Channel::select('id', 'photo')->where('date', '<', $cutoff)->get();
+
+        foreach ($channels as $channel) {
+            File::delete('upload' . $channel->photo);
+        }
+
+        $count = Channel::where('date', '<', $cutoff)->delete();
+
+        Alert::success('Successful', $count . ' Channel(s) older than ' . $months . ' month(s) deleted');
         return redirect('/channel');
     }
     public function show(Channel $Channel)

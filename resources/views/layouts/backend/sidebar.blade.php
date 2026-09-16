@@ -209,7 +209,7 @@
                     <a class="collapse-item @yield('list-video-light')"  href="{{ route('video') }}">List video</a>
                     {{-- @endcan --}}
                     {{-- @can('feed-create') --}}
-                    <a class="collapse-item @yield('add-video-light')" href="{{ route('video.create') }}">Add video</a>
+                    {{-- <a class="collapse-item @yield('add-video-light')" href="{{ route('video.create') }}">Add video</a> --}}
                     {{-- @endcan --}}
                 </div>
 
