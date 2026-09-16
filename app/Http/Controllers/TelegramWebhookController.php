@@ -22,7 +22,9 @@ class TelegramWebhookController extends Controller
     public function handle(Request $request, string $token)
     {
         $bot = Bot::where('token', $token)->first();
-        dd($bot);
+        if (!$bot) {
+            Log::warning('Telegram webhook hit with unknown bot token', ['token' => $token]);
+        }
         abort_unless($bot, 404);
 
         // User blocked / unblocked the bot
