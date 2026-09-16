@@ -19,7 +19,7 @@ class HighlightController extends Controller
          $this->middleware('permission:highlight-list', ['only' => ['index']]);
          $this->middleware('permission:highlight-create', ['only' => ['create','store']]);
          $this->middleware('permission:highlight-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:highlight-delete', ['only' => ['question','destroy']]);
+         $this->middleware('permission:highlight-delete', ['only' => ['question','destroy','bulkDestroy','deleteOld']]);
     }
     public function index(Request $request)
     {
@@ -112,6 +112,48 @@ class HighlightController extends Controller
         File::delete('upload' . $Highlight->photo);
         $Highlight->delete();
         Alert::success('Successful', 'HighLight is Deleted');
+        return redirect('/highlight');
+    }
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            Alert::error('Failed', 'No HighLight selected');
+            return redirect('/highlight');
+        }
+
+        $highlights = Highlight::select('id', 'photo')->whereIn('id', $ids)->get();
+
+        foreach ($highlights as $highlight) {
+            File::delete('upload' . $highlight->photo);
+        }
+
+        Highlight::whereIn('id', $ids)->delete();
+
+        Alert::success('Successful', count($ids) . ' HighLight(s) Deleted');
+        return redirect('/highlight');
+    }
+
+    public function deleteOld($months)
+    {
+        $months = (int) $months;
+        if (!in_array($months, [1, 3])) {
+            Alert::error('Failed', 'Invalid period');
+            return redirect('/highlight');
+        }
+
+        $cutoff = now()->subMonths($months);
+
+        $highlights = Highlight::select('id', 'photo')->where('date', '<', $cutoff)->get();
+
+        foreach ($highlights as $highlight) {
+            File::delete('upload' . $highlight->photo);
+        }
+
+        $count = Highlight::where('date', '<', $cutoff)->delete();
+
+        Alert::success('Successful', $count . ' HighLight(s) older than ' . $months . ' month(s) deleted');
         return redirect('/highlight');
     }
     public function show(Highlight $highlight)

@@ -124,6 +124,8 @@ Route::middleware(['auth', 'check.admin.domain'])->group(function () {
     Route::delete('/highlight/{id}/destroy', [HighlightController::class, 'destroy'])->name('highlight.destroy');
     Route::get('/highlight/{id}/edit', [HighlightController::class, 'edit']);
     Route::patch('/highlight/{id}/update', [HighlightController::class, 'update']);
+    Route::delete('/highlight/bulk-destroy', [HighlightController::class, 'bulkDestroy'])->name('highlight.bulkDestroy');
+    Route::delete('/highlight/delete-old/{months}', [HighlightController::class, 'deleteOld'])->name('highlight.deleteOld');
     //Channel
     Route::get('/channel', [ChannelController::class,'index'])->name('channel');
     Route::get('/channel/create', [ChannelController::class, 'create'])->name('channel/create');
