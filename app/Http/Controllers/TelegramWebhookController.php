@@ -22,6 +22,7 @@ class TelegramWebhookController extends Controller
     public function handle(Request $request, string $token)
     {
         $bot = Bot::where('token', $token)->first();
+        dd($bot);
         abort_unless($bot, 404);
 
         // User blocked / unblocked the bot
