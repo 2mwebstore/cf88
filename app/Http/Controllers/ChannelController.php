@@ -81,7 +81,7 @@ class ChannelController extends Controller
         // Caption and article links
         $videoUrl   = $request->video;
         $photoUrl   = $request->photo;
-        $articleUrl = 'https://cf88.news/channels/' . urlencode($id);
+        $articleUrl = $link_url . '/channels/' . urlencode($id);
         $sponsorUrl = $link_url;
         $title      = $request->title;
 
