@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Fight;
 use App\Models\Category;
+use App\Models\Bot;
+use App\Models\Topic;
+use App\Jobs\BroadcastFightToSubscribers;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FightController extends Controller
 {
@@ -62,7 +67,8 @@ class FightController extends Controller
     public function create()
     {
         $categories = Category::where('status', 0)->orderBy('row')->get();
-        return view('admin.fights.create', compact('categories'));
+        $Topic = Topic::latest()->get();
+        return view('admin.fights.create', compact('categories', 'Topic'));
     }
 
     // Store new fight
@@ -73,6 +79,7 @@ class FightController extends Controller
             'red_fighter' => 'required',
             'blue_fighter' => 'required',
             'category_id' => 'required|exists:category,id',
+            'message_thread_id' => 'required',
         ]);
 
         $fight = Fight::create([
@@ -87,6 +94,46 @@ class FightController extends Controller
             'thumbnail_link' => $request->thumbnail_link ?? '',
             'status'      => 0,
         ]);
+
+        // Prepare Telegram bot data
+        $message_thread_id = $request->message_thread_id;
+
+        $bot_data = Bot::first();
+        $token    = $bot_data->token;
+        $chat_id  = $bot_data->chat_id;
+        $name_url = $bot_data->name_url;
+        $link_url = $bot_data->link_url;
+        $sponsor  = $bot_data->sponsor;
+        $telegram = $bot_data->telegram;
+
+        // Combine Red Fighter and Blue Fighter into the caption title
+        $title      = $request->red_fighter . ' VS ' . $request->blue_fighter;
+        $photoUrl   = $request->thumbnail_link;
+        $articleUrl = $link_url . '/fights/' . urlencode($fight->id);
+        $sponsorUrl = $link_url;
+
+        $caption = $title . "\n"
+            . "[" . $name_url . "](" . $articleUrl . ")" . "\n"
+            . "---------------------------\n"
+            . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")" . "\n"
+            . "Telegram : [" . $name_url . "](" . $telegram . ")";
+
+        $common = [
+            'chat_id'           => $chat_id,
+            'message_thread_id' => $message_thread_id,
+            'caption'           => $caption,
+            'parse_mode'        => 'Markdown',
+        ];
+
+        $response = Http::post("https://api.telegram.org/bot{$token}/sendPhoto", $common + [
+            'photo' => $photoUrl,
+        ]);
+        if ($response->failed()) {
+            Log::error('Telegram API error:', ['response' => $response->body()]);
+        }
+
+        // Broadcast the fight to every subscriber who has started the bot (queued).
+        BroadcastFightToSubscribers::dispatch($caption, $photoUrl, $bot_data->id);
 
         Alert::success('Success', 'Fight created successfully.');
         return redirect()->route('fights');

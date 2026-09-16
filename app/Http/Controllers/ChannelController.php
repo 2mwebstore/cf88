@@ -67,24 +67,30 @@ class ChannelController extends Controller
         // Prepare Telegram bot data
         $message_thread_id = $request->message_thread_id;
 
-        $bot_data = Bot::first();
-        $token    = $bot_data->token;
-        $chat_id  = $bot_data->chat_id;
-        $name_url = $bot_data->name_url;
-        $sponsor  = $bot_data->sponsor;
+        $bot_data      = Bot::first();
+        $chat_id       = $bot_data->chat_id;
+        $token         = $bot_data->token;
+        $name_url      = $bot_data->name_url;
+        $link_url      = $bot_data->link_url;
+        $sponsor       = $bot_data->sponsor;
+        $telegram      = $bot_data->telegram;
+        $create_acc_at = $bot_data->create_acc_at;
+
+        $botToken = $token;
 
         // Caption and article links
         $videoUrl   = $request->video;
         $photoUrl   = $request->photo;
         $articleUrl = 'https://cf88.news/channels/' . urlencode($id);
-        $sponsorUrl = 'https://cf88.news';
+        $sponsorUrl = $link_url;
         $title      = $request->title;
 
         // Markdown-formatted caption
         $caption = $title . "\n"
             . "[" . $name_url . "](" . $articleUrl . ")" . "\n"
             . "---------------------------\n"
-            . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")";
+            . "នាំមកជូនដោយ : [" . $sponsor . "](" . $sponsorUrl . ")" . "\n"
+            . "Telegram : [" . $name_url . "](" . $telegram . ")";
 
         $common = [
             'chat_id'           => $chat_id,
@@ -95,8 +101,7 @@ class ChannelController extends Controller
 
         // 1) Post the video to the group topic. Telegram fetches the .mp4 by URL
         //    (direct link, <= 20 MB). If that fails, fall back to the photo.
-        // $response = Http::post("https://api.telegram.org/bot{$token}/sendVideo", $common + [
-        $response = Http::post("https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/sendVideo", $common + [
+        $response = Http::post("https://api.telegram.org/bot{$botToken}/sendVideo", $common + [
             'video'              => $videoUrl,
             'thumbnail'          => $photoUrl,
             'supports_streaming' => true,
@@ -110,15 +115,14 @@ class ChannelController extends Controller
             $broadcastVideo = $response->json('result.video.file_id') ?: $videoUrl;
         } else {
             Log::warning('Telegram sendVideo failed, falling back to sendPhoto', ['response' => $response->body()]);
-            // $response = Http::post("https://api.telegram.org/bot{$token}/sendPhoto", $common + ['photo' => $photoUrl]);
-            $response = Http::post("https://api.telegram.org/bot8912254938:AAGi5pmrSVvtIRxa7DrkLwLzjTj92AR7bPY/sendPhoto", $common + ['photo' => $photoUrl]);
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/sendPhoto", $common + ['photo' => $photoUrl]);
             if ($response->failed()) {
                 Log::error('Telegram API error:', ['response' => $response->body()]);
             }
         }
 
         // 2) Send the same video to every user who has started the bot (queued).
-        BroadcastChannelToSubscribers::dispatch($caption, $broadcastVideo, $photoUrl);
+        BroadcastChannelToSubscribers::dispatch($caption, $broadcastVideo, $photoUrl, $bot_data->id);
 
         Alert::success('Create Channel Successful');
         return redirect('/channel');

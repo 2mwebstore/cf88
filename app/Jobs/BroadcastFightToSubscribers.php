@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class BroadcastChannelToSubscribers implements ShouldQueue
+class BroadcastFightToSubscribers implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -20,13 +20,11 @@ class BroadcastChannelToSubscribers implements ShouldQueue
     public int $tries   = 1;
 
     /**
-     * @param string $video  Telegram file_id (preferred) or a direct .mp4 URL (<= 20 MB)
-     * @param string $photo  Thumbnail / fallback photo URL
+     * @param string $photo  Thumbnail / fight photo URL (Telegram file_id or direct URL)
      * @param int    $botId  Which bot's subscribers to broadcast to
      */
     public function __construct(
         public string $caption,
-        public string $video,
         public string $photo,
         public int $botId,
     ) {}
@@ -39,22 +37,11 @@ class BroadcastChannelToSubscribers implements ShouldQueue
             return;
         }
 
-        $videoUrl = "https://api.telegram.org/bot{$token}/sendVideo";
         $photoUrl = "https://api.telegram.org/bot{$token}/sendPhoto";
 
-        BotSubscriber::where('bot_id', $this->botId)->where('active', true)->chunkById(500, function ($subscribers) use ($videoUrl, $photoUrl) {
+        BotSubscriber::where('bot_id', $this->botId)->where('active', true)->chunkById(500, function ($subscribers) use ($photoUrl) {
             foreach ($subscribers as $s) {
-                $res = $this->sendVideo($videoUrl, $s->chat_id);
-
-                // Video failed for a reason other than blocked/flood -> send photo instead
-                if ($res->failed() && !in_array($res->status(), [403, 429])) {
-                    $res = Http::post($photoUrl, [
-                        'chat_id'    => $s->chat_id,
-                        'photo'      => $this->photo,
-                        'caption'    => $this->caption,
-                        'parse_mode' => 'Markdown',
-                    ]);
-                }
+                $res = $this->sendPhoto($photoUrl, $s->chat_id);
 
                 if ($res->status() === 403) {
                     // User blocked the bot
@@ -62,7 +49,7 @@ class BroadcastChannelToSubscribers implements ShouldQueue
                 } elseif ($res->status() === 429) {
                     // Flood control: wait as Telegram asks, then retry once
                     sleep((int) $res->json('parameters.retry_after', 5));
-                    $this->sendVideo($videoUrl, $s->chat_id);
+                    $this->sendPhoto($photoUrl, $s->chat_id);
                 } elseif ($res->failed()) {
                     Log::warning('Broadcast send failed', ['chat_id' => $s->chat_id, 'body' => $res->body()]);
                 }
@@ -72,15 +59,13 @@ class BroadcastChannelToSubscribers implements ShouldQueue
         });
     }
 
-    private function sendVideo(string $url, int $chatId)
+    private function sendPhoto(string $url, int $chatId)
     {
         return Http::post($url, [
-            'chat_id'            => $chatId,
-            'video'              => $this->video,
-            'thumbnail'          => $this->photo,
-            'caption'            => $this->caption,
-            'parse_mode'         => 'Markdown',
-            'supports_streaming' => true,
+            'chat_id'    => $chatId,
+            'photo'      => $this->photo,
+            'caption'    => $this->caption,
+            'parse_mode' => 'Markdown',
         ]);
     }
 }
