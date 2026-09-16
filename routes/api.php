@@ -19,8 +19,6 @@ use App\Http\Controllers\TelegramWebhookController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-// Route::post('/telegram/webhook/{secret}', [TelegramWebhookController::class, 'handle']);
-Route::post('/telegram/debug', fn() => response()->json(['secret_seen' => config('services.telegram.webhook_secret')]));
 Route::post('/telegram/webhook/{token}', [TelegramWebhookController::class, 'handle']);
 Route::get('/footer',[ApiController::class,'getFooter']);
 Route::get('/logo',[ApiController::class,'getLogo']);
